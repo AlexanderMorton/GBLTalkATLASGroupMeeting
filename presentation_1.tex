@@ -1,0 +1,559 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beamer Presentation
+% LaTeX Template
+% Version 1.0 (10/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+\documentclass{beamer}
+\usepackage{tikz}
+\usetikzlibrary{fadings}
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{sidecap}
+\definecolor{links}{HTML}{2A1B81}
+\hypersetup{colorlinks,linkcolor=,urlcolor=links}
+\hypersetup{urlcolor=links}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[EUTelescope and GBL]{The GBL Tracking algorithm in EUTelescope} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Alexander Morton} % Your name
+\institute[Glasgow] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{
+University of Glasgow \\ % Your institution for the title page
+\medskip
+\textit{a.morton.2@research.com} % Your email address
+}
+\date{\today} % Date, can be changed to a custom date
+
+\logo{\includegraphics[scale = 0.025]{pics/GlaUni.png}}
+\titlegraphic{
+\includegraphics[scale = 0.2]{pics/EUTel.png}\\
+\includegraphics[scale = 0.2]{pics/gbl-logo.png}
+\includegraphics[scale = 0.2]{pics/mp2-logo.png}
+}
+\begin{document}
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+
+%\begin{frame}
+%\frametitle{Overview} % Table of contents slide, comment this block out to remove it
+%\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+%\end{frame}
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+%------------------------------------------------
+
+
+%------------------------------------------------
+\section{Track Fitting in EUTelescope}
+\subsection{EUDET/AIDA Pixel Beam Telescope}
+\begin{frame}
+\frametitle{EUDET/AIDA Pixel Beam Telescope}
+\begin{itemize}
+\small{
+\item The telescope is a series of pixel sensors used to reconstruct particles trajectories
+\item To reconstruct a particles trajectory the position/time must be determined with the following 
+\begin{enumerate}
+\item  6 CMOS pixel detectors $\rightarrow$ 18.4x18.4 $\mu m^{2}$ , 115.2 $\mu s$ integration time/frame.
+\item Additional FEI4 device used in efficiency measurements to reduce the time resolution to 25 ns.
+\end{enumerate}
+\item EUTelescope is an advanced reconstruction framework for this setup, the latest workshop can be found \href{https://indico.desy.de/conferenceDisplay.py?ovw=True&confId=10685}{here}.
+}
+\end{itemize}
+\begin{figure}
+  \begin{columns}
+        \column{.3\linewidth}
+        \includegraphics[scale=0.03]{pics/setup.JPG}
+        \label{fig:example left}
+        \column{.6\linewidth}
+        \caption{The mimosa sensors with a device under test (DUT).}
+      \end{columns}
+\end{figure}
+\end{frame}
+
+
+\subsection{EUTelescope}
+\begin{frame}
+\frametitle{Track Reconstruction in EUTelescope}
+\small{
+\begin{itemize}
+\item Deterministic Annealing Filter $\rightarrow$ DAF. 
+\begin{enumerate}
+\small{
+\item Pattern recognition is combined with track fitting, does not allow easy addition of new pattern techniques 
+\item Models all scatterers as thin.
+\item Curved tracks are not reconstructed accurately. 
+\item Updates are coming! Watch this space. 
+}
+\end{enumerate}
+\item  General Broken Lines Algorithm $\rightarrow$ \href{http://www.desy.de/~kleinwrt/GBL/doc/cpp/html/index.html}{GBL}.
+\begin{enumerate}
+\small{
+\item A generic track fitting package written by Claus Kleinwort written in C++.
+\item Fit parameters used are curvature and offsets. 
+\item Scattering information is included in fit in the form of kink angles.
+\item \textbf{Fitting with arbitrary magnetic fields.}
+}
+\item Algorithm implemented in C++.
+\end{enumerate}
+\end{itemize}
+A very preliminary comparison of the current DAFFitter and GBL can be found \href{https://github.com/AlexanderMorton/GBLManuel/blob/master/RyanNelsonSummerPPEReport.pdf}{here}. 
+}
+\end{frame}
+%------------------------------------------------
+
+%------------------------------------------------
+\subsection{Track Fitting with GBL in EUTelescope}
+\begin{frame}
+\frametitle{Track Fitting with GBL Algorithm}
+\begin{itemize}
+\item The GBL package has easy interfaces to include the needed information for a track fit and recovering the fit parameters.
+\item The GBL Algorithm requires additional software to work effectively within EUTelescope. 
+\begin{enumerate}
+	\item \href{http://www.desy.de/~blobel/mptalks.html}{Millepede}  $\rightarrow$ Algorithm designed for least squares fit problems with a large set of parameters.
+	\item \href{ftp://root.cern.ch/root/doc/18Geometry.pdf}{TGeo} $\rightarrow$ A ROOT geometry package used to describe the small/large scale characteristics of the setup.
+	\item \href{http://ilcsoft.desy.de/portal/software_packages/marlin/|}{Marlin} $\rightarrow$ Used for event by event processing. 
+	\item \href{http://ilcsoft.desy.de/portal/software_packages/lcio/}{LCIO} $\rightarrow$ Data model. 
+\end{enumerate}
+\end{itemize}
+\vspace{10pt}
+\textbf{A single track can be constructed in 5 steps...} 
+\end{frame}
+\subsection{Five Steps}
+\begin{frame}
+\frametitle{\textbf{1} The Discrete Track}
+\begin{figure}
+\label{Scat}
+\includegraphics[scale=0.60]{pics/meas-scat-jac-link.png}	
+\caption{\textcolor{red}{Red Dots: Measurements/Scattering} \newline \textcolor{orange}{Orange Dots: Scattering} \newline The location of the scattering points for any trajectory constructed. Thick scattering modeled by two thin scatterers. The scattering locations are dependent on the radiation length distribution with the particles trajectory.}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{\textbf{2} Add Measurements}
+\begin{figure}
+\label{Meas}
+\includegraphics[width=0.6\linewidth]{pics/prop.png}
+\caption{
+\textcolor{green}{Green Plane: Local coordinate system XY plane (The sensor surface)}\newline
+\textcolor{blue}{Blue Plane: Global Coordinate system which is shared by all sensors}\newline
+\textcolor{black}{Black Lines: Track before/after motion}\newline
+\textcolor{black}{Black Arrow: Change on track position in local frame}\newline
+\textcolor{red}{Red Arrow: Change in track position in global frame}\newline}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{\textbf{3} Add Scattering}
+\begin{figure}
+\includegraphics[width=0.7\linewidth]{pics/prop600GoodOffSensor.png}
+\caption{
+\textcolor{black}{Black Line: Track} \newline
+\textcolor{orange}{Orange Cone: The position errors due to scattering at a location} \newline
+\textcolor{blue}{Blue Plane: Measurement plane. Note correlation of positions due to cone orientation on measurement plane} \newline
+}
+\label{fig:ScatFrame}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{\textbf{4} Alignment}
+\begin{figure}
+\includegraphics[width=0.7\linewidth]{pics/alignBigger.png}
+\caption{
+\textcolor{black}{Black Line: Track} \newline
+\textcolor{red}{Red Arrow: The change in location of track due to change in orientation of sensor}\newline
+\textcolor{green}{Green Arrow: Change on sensor surface in global frame. } 
+}
+This information is then used by millepede to determine alignment constants which are used to update the geometry file.
+\label{fig:TC1}
+\end{figure}
+\end{frame}
+
+\section{Examples and Results}
+\subsection{Example Output from Quad Module}
+\begin{frame}
+\frametitle{Example Output from the Quad Module}
+\begin{columns}[t]
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.8\linewidth]{pics/HitMapQuadAfterTrack.pdf}\\
+\tiny{\textbf{Hit map after tracking in local frame}}\\
+\includegraphics[width=0.8\linewidth]{pics/kinksQuad.pdf}\\
+\tiny{\textbf{Kinks in local frame}}\\
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.8\linewidth]{pics/QuadXRes73Micron.pdf}\\ 
+\tiny{\textbf{Residual on surface of sensor in local X direction}}
+
+\tiny{
+\vspace{10pt}
+Results look as expected for 250x50 $\mu m^{2}$ sensor assuming uniform distribution on each pixel. \\
+\vspace{10pt}
+Kinks in local frame depend on assumed radiation length and are not the same as using local derivatives. \\
+\vspace{10pt}
+All track parameters are output by default to check track model. \\
+\vspace{10pt}
+Track/State/Hit/Cluster objects are arranged in a simple hierarchy to allow easy additions to code.\\
+}
+\end{columns}
+\end{frame}
+
+\subsection{Magnetic Fields}
+\begin{frame}
+\frametitle{Magnetic Fields}
+\begin{figure}
+\includegraphics[width=0.45\linewidth]{pics/beamE3B1.pdf}
+\tiny{
+\caption{\tiny{Measurement of beam energy using the curvature of the tracks with 1T magnetic field. The clustering pattern recognition was used to find tracks to be fitted. The R parameter is the clustering window in which hits will be assumed to form a track if inside. The beam energy is the pattern recognition assumption during clustering. No bias was found between pattern recognition settings and the final measured beam energy.}}
+}
+\end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{Efficiency Measurements}
+\begin{columns}[t]
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.65\linewidth]{pics/desy250x50AC_250x50DC_20V20.png}\\
+\tiny{\textbf{AC Sensor biased 20V }}\\
+\includegraphics[width=0.65\linewidth]{pics/desy250x50AC_250x50DC_20V21.png}\\
+\tiny{\textbf{DC Sensor biased 20V}}\\
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.65\linewidth]{pics/desy250x50irad_250x50DC_200V20.png}\\ 
+\tiny{\textbf{AC Sensor irradiated to $10^{15}$ $n_{eq} cm^{-2}$ biased 200V.}}
+
+\tiny{
+\vspace{10pt}
+ In effort toward the ATLAS upgrade, efficiency measurements have been performed on different sensors irradiated to different fluencies at the DESY testbeam. \\ 
+\vspace{10pt}
+Pitch 250x50 $\mu m$ with different coupling.\\
+\vspace{10pt}
+Analysis code for efficiency measurements exist + tbmon reconstruction software can be used \\
+\vspace{10pt}
+FEI4 timing plane used to identify track causing DUT readout. \\
+\vspace{10pt} 
+Plots: Helen Hayward.
+}
+\end{columns}
+\end{frame}
+
+\subsection{Efficiency Measurements with ATLAS12 Strip Sensor}
+\begin{frame}
+\frametitle{Efficiency Measurements with ATLAS12 Strip Sensor}
+\begin{columns}[t]
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.9\linewidth]{pics/may2015Testbeam_cropped.pdf}\\
+\tiny{\textbf{Combined efficiency for each strip with different thresholds}}\\
+\includegraphics[width=0.9\linewidth]{pics/eff_strip.pdf}\\
+\tiny{\textbf{Combined efficiency for each strip for 316 mV  threshold. }}\\
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.9\linewidth]{pics/eff_strip_single_cropped.pdf}\\ 
+\tiny{\textbf{Efficiency with distance from centre of strip.}}
+
+\tiny{
+\vspace{10pt}
+ATLAS12 Strip Sensor (74.5 $\mu m$ pitch). \\
+\vspace{10pt}
+Interested in individual strips efficiency. Requires accurate prediction on DUT.\\
+\vspace{10pt}
+Using analysis code which is part of the SCT example.\\
+\vspace{10pt}
+Plots: Richard Peschke.
+}
+\end{columns}
+\end{frame}
+
+\subsection{Current Testbeam Reconstruction}
+\begin{frame}
+\frametitle{Current Testbeam Reconstruction (October 2015)}
+\begin{columns}[t]
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.9\linewidth]{pics/chi_new.pdf}\\
+\tiny{\textbf{Not so perfect Chi2.}}\\
+\includegraphics[width=0.9\linewidth]{pics/inc_new.pdf}\\
+\tiny{\textbf{Incidence of track on DUT for local X axis. }}\\
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.9\linewidth]{pics/Res_new.pdf}\\ 
+\tiny{\textbf{Residual on DUT for local X axis.}}
+
+\tiny{
+\vspace{10pt}
+Some initial results from this weeks testbeam. \\
+\vspace{10pt}
+Reconstructed tracks is lower than expected at 0.5 per event (Expect about 1.5 in most cases).\\
+\vspace{10pt}
+Beam divergence is as expect and the residual RMS is dominated by the intrinsic error: $\sim$ 25 $\mu m$.\\
+\vspace{10pt}
+However overall fit is still not perfect.
+}
+
+\end{columns}
+\end{frame}
+
+\section{Future Work and Conclusion}
+\begin{frame}
+\frametitle{Looking to the Future/Conclusion}
+A generic track fitting model has been implemented into EUTelecope with working examples. Analysis is still ongoing and new challenges await. 
+\begin{itemize}
+\item Radial strips and improvement in the implementation of the measurement frame
+\item Replacing the old GEAR file format
+\begin{enumerate}
+\item Allow multiple global frames imposed on one another. This allows different orientated sensors on the same plane. 
+\item Include addition global parameters for a set of runs. Scale factors between the first and last plane as an example
+\end{enumerate}
+\item General re-factorization, moving to c++11 and beyond 
+\item Examples should be incorporated into Ctest.
+\item Improvements to DAFFitter needs to be made more generic if possible
+\item pyGBL should be added as additional analysis code
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+Backup
+\end{frame}
+\section{Additional Information}
+\subsection{EUDET/AIDA Pixel Beam Telescope}
+\begin{frame}
+\frametitle{ A Quick Detour: EUDET/AIDA Pixel Beam Telescope}
+\begin{itemize}
+\small{
+\item 6 CMOS pixel detectors (18.4x18.4 $\mu m^{2}$) $\rightarrow$ 1152 columns x 576 rows 2x1 $cm^2$.
+\item Rolling shutter $\rightarrow$ continuous readout $\rightarrow$ 115.2 $\mu s$ integration time/frame.
+\item Additional FEI4 device used for Region of Interest (ROI) and time stamping.
+\item TLU and EUDAQ act as hard/soft layer for data acquisition.
+\item EUTelescope is an advanced reconstruction framework for this setup, the latest workshop can be found \href{https://indico.desy.de/conferenceDisplay.py?ovw=True&confId=10685}{here}.
+}
+\end{itemize}
+\begin{figure}
+  \begin{columns}
+        \column{.3\linewidth}
+        \includegraphics[scale=0.03]{pics/setup.JPG}
+        \label{fig:example left}
+        \column{.6\linewidth}
+        \caption{The mimosa sensors with a device under test (DUT).}
+      \end{columns}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{EUTelescope} 
+\begin{itemize}
+\item EUTelescope is a highly generic testbeam reconstruction and analysis framework.
+\item It is a software package which is part of ILCsoft. A list of packages can be found \href{http://ilcsoft.desy.de/portal/software_packages/}{here}.
+\item Relies on two packages for data structures and reconstruction.
+ \begin{enumerate}
+	\item Modular Analysis Reconstruction for the LINear Collider $\rightarrow$. \href{http://ilcsoft.desy.de/portal/software_packages/marlin/|}{Marlin}.
+	\item Linear Collider Input Output $\rightarrow$ \href{http://ilcsoft.desy.de/portal/software_packages/lcio/}{LCIO}.
+\end{enumerate}
+\item On top of this additional software packages are used. 
+\begin{enumerate}
+	\item \href{http://www.desy.de/~blobel/mptalks.html}{Millepede}  $\rightarrow$ Algorithm designed for least squares fit problems with a large set of parameters.
+	\item \href{ftp://root.cern.ch/root/doc/18Geometry.pdf}{TGeo} $\rightarrow$ A ROOT geometry package used to describe the small/large scale characteristics of the setup.
+\end{enumerate}
+\end{itemize}
+The idea is to go from individual hit strips/pixels - or more complex - to the final reconstructed tracks. 
+A general introduction is given \href{https://cds.cern.ch/record/2000969/files/AIDA-NOTE-2015-009.pdf}{here}.
+\end{frame}
+
+\subsection{Pattern Recognition}
+\begin{frame}
+\frametitle{Pattern Reconstruction}
+You want to associate hits on each plane to a single track. This is more art than a science with many different procedures appropriate for different geometries and enviroments. 
+\begin{columns}
+\column{0.5\textwidth}
+\begin{itemize}
+\item Pattern Recognition comes with two regimes with GBL in EUTelescope.
+ \begin{enumerate}
+\small{
+	\item Clustering: Extrapolate all hits to first plane and cluster (Useful if some planes have a low efficiency).
+	\item Triplets Use both arms of the telescope to form triplets then link (Low fake rate. Recommended!).
+}
+\end{enumerate}
+\item Both regimes work with arbitrary magnetic field.
+\end{itemize}
+\column{0.5\textwidth}
+\begin{figure}
+\includegraphics[scale=0.30]{pics/DoubletCenDist-442.pdf}	
+\caption{\small{ Residual (mm) of prediction - measurement. A series of cuts is applied to determine signal from background.}}
+\end{figure}
+\end{columns}
+\end{frame}
+
+%\begin{frame}
+%\input{pics/mpv.tikz}
+%\end{frame}
+
+%\begin{frame}
+%\input{pics/instrip.tikz}
+%\end{frame}
+\subsection{List of Examples}
+\begin{frame}
+\frametitle{The Fitter in Action}
+EUTelescope is a collaborative effort first and foremost and to that end many working examples have been created to aid further analysis. The full analysis chain is described for each example and works from installation (Data on DESY AFS).  Brief Manual \href{https://github.com/AlexanderMorton/GBLManuel/blob/master/thesis.pdf}{here}
+\begin{description} 
+\item[noDUTExample] \small{This example demostrates the use of the fitter with magnetic fields and varying beam energies}.
+\item[Quad] \small{Quad module with reference DUT at the DESY testbeam }.
+\item[QuadSLAC]  \small{Quad module and reference DUT at the SLAC testbeam}.
+\item[Pixels] \small{High radiation length enviroment using the gear file to describe dead material. Two APIX devices at DESY testbeam.}
+\item[mappingAPIX] \small{Two APIX DUTs using the mapping processor between channel number and geometric cluster position.}
+\item[mappingAPIXSLAC] \small{This is the same as the other mapping example but at SLAC and with highly irradiated sensors.}
+\item[SCT] \small{Strip example which has been used for efficiency measurements.}
+\item[StripAlibava] \small{ATLAS12 strip device using the alibava system as readout.}
+\item[X0] \small{The use of the kink angle estimation is demonstrated here.}
+\end{description} 
+\end{frame}
+\subsection{Reconstruction within EUTelescope}
+\begin{frame}
+\frametitle{Reconstruction in a Nutshell}
+\begin{columns}
+\column{0.5\textwidth}
+\begin{figure}
+\includegraphics[scale=0.13]{pics/EUTelFullRecoChain.pdf}
+\caption{\tiny{A typical reconstruction chain. Different processors can reconstruct the clusters/hits/track in different ways depending on the analysis.}}
+\end{figure}
+\column{0.5\textwidth}
+Reconstruction comes in a series of steps with track fitting coming last in the chain. 
+\begin{itemize}
+\tiny{
+\item Converter: Takes unique output from readout system and creates an LCIO file with the required format. (Can combine telescope and DUT data further down the chain).
+\pause
+\item Clustering: TGeo used here to relate fired channel number to a geometric pixel (Many different types of cluster can be classified using different techniques).
+\pause
+\item Hitmaker: Relates clusters to a single hit position with intrinsic measurement errors.
+\pause
+\item Pre/Full Alignment: Determines physical position of sensors. Different track models and alignment parameterizations can be used. However all methods depend on Millepede for least squares fitting for local/global parameters.
+\pause
+\item Tracking: The most likely track given initial assumptions is deduced, the final tracks are output in lcio/root formats.
+}
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\subsection{Track Creation}
+\begin{frame}
+\frametitle{Track Fitting with GBL Algorithm}
+The GBL algorithm has easy interfaces to include the needed information for a track fit and recovering the fit parameters. This information would be needed in any tracking situation and a quick introduction is presented now: \\
+\textbf{The five fold way}
+\begin{enumerate}
+\item \small{ Need to link discretized points to form a full trajectory. Figure \ref{Scat} shows the specific setup for EUTelescope.}
+\item \small{The trajectory must contain measurements with errors. Figure \ref{Scat} \textcolor{red}{Red Points}.}
+\item \small{ Points which model scattering have kink angles and errors added. Figure \ref{Scat} \textcolor{orange}{Orange Points}.}
+\item \small{ Global derivatives which relate motions of the sensors with local frame residuals are added for alignment.}
+\item \small{\textit{If needed: Local derivatives are added to determine parameters which relate to the track's residual on certain planes}.}
+\end{enumerate}
+\end{frame}
+
+
+\end{document} 
+
+\begin{frame}
+\frametitle{Track Reconstruction in EUTelescope}
+\small{
+\begin{itemize}
+\item Deterministic Annealing Filter $\rightarrow$ DAF. 
+\begin{enumerate}
+\small{
+\item Designed to include multiple measurements in a single fit.
+\item Scattering information is added as additional uncertainty in covariance matrix.
+\item Does not allow tracking with curved tracks (Magnetic fields). 
+\item Updates are coming! Watch this space. 
+}
+\end{enumerate}
+\item  General Broken Lines Algorithm $\rightarrow$ \href{http://www.desy.de/~kleinwrt/GBL/doc/cpp/html/index.html}{GBL}.
+\begin{enumerate}
+\small{
+\item Global fit performed with fit parameters: $(q/p,o_{1},o_{2},o_{3})$ $\rightarrow$ curvature and offsets.
+\item Scattering information is included in fit in the form of kink angles. Useful for X0 measurements.
+\item Fitting with arbitrary magnetic fields.
+}
+\item Algorithm implemented in C++.
+\end{enumerate}
+\end{itemize}
+A very preliminary comparison of the current DAFFitter and GBL can be found \href{https://github.com/AlexanderMorton/GBLManuel/blob/master/RyanNelsonSummerPPEReport.pdf}{here}. 
+}
+\end{frame}

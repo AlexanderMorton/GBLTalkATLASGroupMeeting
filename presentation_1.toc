@@ -1,13 +1,19 @@
-\beamer@endinputifotherversion {3.36pt}
-\beamer@sectionintoc {1}{Track Fitting in EUTelescope}{2}{0}{1}
-\beamer@subsectionintoc {1}{1}{EUDET/AIDA Pixel Beam Telescope}{2}{0}{1}
-\beamer@subsectionintoc {1}{2}{EUTelescope}{3}{0}{1}
-\beamer@subsectionintoc {1}{3}{Four Steps}{4}{0}{1}
-\beamer@sectionintoc {2}{Examples and Results}{8}{0}{2}
-\beamer@subsectionintoc {2}{1}{A Quick Comparison of DAF and GBL}{8}{0}{2}
-\beamer@subsectionintoc {2}{2}{Example Output from Quad Module}{9}{0}{2}
-\beamer@subsectionintoc {2}{3}{Efficiency Measurements with ATLAS12 Strip Sensor}{11}{0}{2}
-\beamer@sectionintoc {3}{Conclusion}{12}{0}{3}
-\beamer@sectionintoc {4}{Additional Information}{14}{0}{4}
-\beamer@subsectionintoc {4}{1}{Magnetic Fields}{14}{0}{4}
-\beamer@subsectionintoc {4}{2}{Current Testbeam Reconstruction}{15}{0}{4}
+\beamer@endinputifotherversion {3.33pt}
+\beamer@sectionintoc {1}{Radial Strips}{2}{0}{1}
+\beamer@sectionintoc {2}{Track Selection and Analysis}{6}{0}{2}
+\beamer@subsectionintoc {2}{1}{Examples}{7}{0}{2}
+\beamer@subsectionintoc {2}{2}{Track Selection}{8}{0}{2}
+\beamer@subsectionintoc {2}{3}{Comparison of Estimators}{9}{0}{2}
+\beamer@sectionintoc {3}{Conclusion}{10}{0}{3}
+\beamer@subsectionintoc {3}{1}{Four Steps}{12}{0}{3}
+\beamer@sectionintoc {4}{Examples and Results}{16}{0}{4}
+\beamer@subsectionintoc {4}{1}{A Quick Comparison of DAF and GBL}{16}{0}{4}
+\beamer@subsectionintoc {4}{2}{Example Output from Quad Module}{17}{0}{4}
+\beamer@subsectionintoc {4}{3}{Efficiency Measurements with ATLAS12 Strip Sensor}{19}{0}{4}
+\beamer@sectionintoc {5}{Conclusion}{20}{0}{5}
+\beamer@sectionintoc {6}{Additional Information}{24}{0}{6}
+\beamer@subsectionintoc {6}{1}{EUDET/AIDA Pixel Beam Telescope}{24}{0}{6}
+\beamer@subsectionintoc {6}{2}{Pattern Recognition}{26}{0}{6}
+\beamer@subsectionintoc {6}{3}{List of Examples}{27}{0}{6}
+\beamer@subsectionintoc {6}{4}{Reconstruction within EUTelescope}{28}{0}{6}
+\beamer@subsectionintoc {6}{5}{Track Creation}{33}{0}{6}

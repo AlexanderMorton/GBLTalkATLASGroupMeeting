@@ -85,12 +85,15 @@
 \definecolor{links}{HTML}{2A1B81}
 \hypersetup{colorlinks,linkcolor=,urlcolor=links}
 \hypersetup{urlcolor=links}
+\usepackage{tcolorbox}
+\newtcolorbox{mybox}{colback=red!5!white,colframe=red!75!black}
+\newtcolorbox{myboxGreen}{colback=green!5!white,colframe=green!75!black}
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[EUTelescope and GBL]{The GBL Tracking Algorithm in EUTelescope} % The short title appears at the bottom of every slide, the full title is only on the title page
+\title[Radial Strips]{Radial Strips} % The short title appears at the bottom of every slide, the full title is only on the title page
 
 \author{Alexander Morton} % Your name
 \institute[Glasgow] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
@@ -116,6 +119,10 @@ University of Glasgow \\ % Your institution for the title page
 %\begin{frame}
 %\frametitle{Overview} % Table of contents slide, comment this block out to remove it
 %\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+%\begin{mybox}
+%I will focus on my own work but will also try to give an overview of GBL and EUTelescope.\\
+%Many people to thank but Claus Kleinwort stands out. 
+%\end{mybox}
 %\end{frame}
 %----------------------------------------------------------------------------------------
 %	PRESENTATION SLIDES
@@ -125,70 +132,217 @@ University of Glasgow \\ % Your institution for the title page
 
 
 %------------------------------------------------
-\section{Track Fitting in EUTelescope}
-\subsection{EUDET/AIDA Pixel Beam Telescope}
+
+\section{Radial Strips}
 \begin{frame}
-\frametitle{EUDET/AIDA Pixel Beam Telescope}
-\begin{itemize}
-\small{
-\item The telescope is a series of pixel sensors used to reconstruct particle trajectories
-\item To reconstruct a particles trajectory the position/time must be determined with the following 
-\begin{enumerate}
-\item  6 CMOS pixel detectors $\rightarrow$ 18.4x18.4 \si{\micro\metre\squared}  , 115.2 \si{\micro\second} integration time/frame.
-\item Additional timing plane used in efficiency measurements to reduce the time resolution to 25 ns.
-\end{enumerate}
-\item EUTelescope is a reconstruction framework for this setup.
-}
-\end{itemize}
-\begin{figure}
-  \begin{columns}
-        \column{.3\linewidth}
-        \includegraphics[scale=0.03]{pics/setup.JPG}
-        \label{fig:example left}
-        \column{.6\linewidth}
-        \caption{The telescope setup composed of 6 pixel sensors. }
-      \end{columns}
-\end{figure}
+\frametitle{Radial Strips}
+Two strips \textcolor{red}{red} and \textcolor{blue}{blue} \\
+The transformations stored in the gear will lead to each strip having a non-diagonal covariance matrix in the local frame \\
+\includegraphics[scale=0.50]{pics/radial.pdf}
 \end{frame}
 
-\subsection{EUTelescope}
 \begin{frame}
-\frametitle{Track Reconstruction in EUTelescope}
+\frametitle{The Problem and how this will be Resolved.}
 \begin{itemize}
-\item Broken lines track fitting is $\chi^{2}$ minimisation with scattering taken into consideration.
-\item Two track fitting techniques are used at the moment.
+\item \textbf{What are the uncertainties associated to each hit?}
+\begin{itemize}
+\item Uncertainties are defined in some frame \\$\rightarrow$ \textbf{Local} On sensor surface \\ $\rightarrow$ \textbf{Measurement} Frame in which hit has diagonal covariance matrix.
+\item Normally covariance in local frame is diagonal and the same for all hits.
+\item In general each hit will have it's own covariance matrix. 
+\end{itemize} 
+\item Small updates to pattern recognition and tracking
+\begin{itemize}
+\item Pattern recognition $\rightarrow$ Must make sure we compare hits along axis with information
+\item Tracking $\rightarrow$ Need the correct covariance matrix for each measurement
+\item \textbf{Both updates require a transformation: \\ Meas (diagonal) $\rightarrow$ Local (Non diagonal) } 
+\end{itemize} 
+\item Each hit must store an additional transformation to get the correct non diagonal covariance matrix 
+\begin{itemize}
+\item The orientation of the strip in the local frame must be determined
+\item This should be combined with cluster size studies already done to get X/Y variance magnitude 
+\end{itemize}  
+\item \textbf{We can chose the frame in which our residual is defined}
 \end{itemize}
-\small{
-\begin{enumerate}
-\item Deterministic Annealing Filter $\rightarrow$ DAF. 
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Outstanding concerns....}
 \begin{itemize}
-\small{
-\item Pattern recognition is combined with track fitting
+\item What frame do you want your residuals?
 \begin{itemize}
-\item Does not allow addition of new pattern recognition methods. 
+\item Local frame
+\item Measurement frame of each strip
 \end{itemize}
-\item Models all scatterers as thin.
-\item \textbf{Track fitting not possible with magnetic fields.} 
-\item Usual method for track reconstruction
+\item How do we retrieve this information for a variety of DUTs?
+\begin{itemize}
+\item Must be a generic way which can be used for any DUT.
+\item Need to be able to convert this information from schematics to something we can use
+\item Related to last point $\rightarrow$ Make it TGeo volume specific.
+\begin{itemize}
+\item This method will have to be used for clustering anyway.
+\end{itemize}
+\item Use the volume information for each cluster to determine transformation
+\begin{itemize}
+\item \textbf{Must make sure this functionality is available $\rightarrow$ Otherwise need another store of cluster to transformation}
+\end{itemize} 
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Unrelated Point: Track Selection}
+Example of track selection for $\sqrt{\sigma^{2}}<5.5$ for strip sensor DUT at DESY \\ $\rightarrow$ \textcolor{green}{Pass cut}  \textcolor{red}{Fail cut}
+\begin{columns}[t]
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=1\linewidth]{pics/covXCut-5_5Micron.pdf}\\
+\includegraphics[width=1\linewidth]{pics/posX-Cut5_5MicronErr.pdf}\\
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=1\linewidth]{pics/resXCut-5_5MicronErr.pdf}\\ 
+\begin{itemize}
+\item Shown at testbeam workshop
+\item Track selection for any variable of interest
+\item \textbf{This might be of interest to some!}
+\end{itemize}
+\end{columns}
+\vspace{5pt}
+\end{frame}
+
+
+
+\section{Track Selection and Analysis}
+\begin{frame}
+\frametitle{Track Analysis and Selection}
+\begin{itemize}
+\item All track parameters after fitting are displayed
+\item More indepth analysis needs track selection
+\begin{itemize}
+\item Track selection can be performed on all track fit variables 
+\item Selection will produce an orthogonal pass/fail for each track
+\end{itemize} 
+\item Tbmon/ROOT output format available for further analysis 
+\end{itemize}
+\begin{myboxGreen}
+Plots shown here are all part of the examples which are found on \href{https://github.com/AlexanderMorton/eutelescope/tree/prepareForMerge}{github}.
+\end{myboxGreen}
+\end{frame}
+
+
+\subsection{Examples}
+\begin{frame}
+\frametitle{Examples}
+\begin{columns}[t]
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.65\linewidth]{pics/desy250x50AC_250x50DC_20V20.png}\\
+\tiny{\textbf{Efficiency measurements with AC pixel sensor biased 20V }}\\ 
+\includegraphics[width=0.8\linewidth]{pics/may2015Testbeam_cropped.pdf}\\
+\tiny{\textbf{Strip efficiency for a range of thresholds}}\\
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=1\linewidth]{pics/QuadXRes73Micron.pdf}\\ 
+\tiny{\textbf{Local frame X axis residual of Quad module}}
+
+\tiny{
+\vspace{10pt}
+A variety of different examples  \\ 
+\vspace{10pt} 
+Encouraged to use the example as a template for further work \\
+\vspace{10pt}
+Willing to create new examples for new datasets \\
+\vspace{10pt}
+Plots: Helen Hayward/Richard Peschke
 }
-\end{itemize}
-\item  General Broken Lines Algorithm $\rightarrow$ GBL
+\end{columns}
+\end{frame}
+
+
+\subsection{Track Selection}
+
+\begin{frame}
+\frametitle{Selection based on Prediction on DUT}
+Example of track selection for $\sqrt{\sigma^{2}}<5.5$ for strip sensor DUT at DESY \\ $\rightarrow$ \textcolor{green}{Pass cut}  \textcolor{red}{Fail cut}
+\begin{columns}[t]
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=1\linewidth]{pics/covXCut-5_5Micron.pdf}\\
+\includegraphics[width=1\linewidth]{pics/posX-Cut5_5MicronErr.pdf}\\
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=1\linewidth]{pics/resXCut-5_5MicronErr.pdf}\\ 
 \begin{itemize}
-\small{
-\item A generic track fitting package written by Claus Kleinwort in C++.
-\item Fit parameters are curvature and offsets. 
-\item Scattering information is included in fit in the form of kink angles.
-\item \textbf{Fitting with arbitrary magnetic fields.}
-\item Easy to add additional track parameters of interest.
+\item DUT $\rightarrow$ Plane 8
+\item Selection will be used to analyse poor fit datasets
+\end{itemize}
+\end{columns}
+\vspace{5pt}
+\end{frame}
+
+\subsection{Comparison of Estimators}
+\begin{frame}
+\frametitle{Comparison of Estimators}
+A quick comparison of different estimators on the same dataset \\ $\rightarrow$ \textcolor{black}{chi2}  \textcolor{red}{Cauchy} \textcolor{green}{Huber}  \textcolor{blue}{Tukey}
+\begin{columns}[t]
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=1.1\linewidth]{pics/chi2-est.png}\\
+\tiny{\textbf{All estimators applied for a single iteration}}\\
+\includegraphics[width=1.1\linewidth]{pics/estimators-sensor-8.pdf}\\
+\tiny{\textbf{Residual on sensor for each estimator. Note Tukey not included}}\\
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=1.1\linewidth]{pics/cauchy_1_2_5Iter.pdf}\\ 
+\tiny{\textbf{Both Cauchy.  \textcolor{black}{One iteration} , \textcolor{red}{Two iterations}, 5th iteration the same as 2nd}}\\
 \begin{itemize}
-\item X0 measurements use this feature
+\item Not much difference between estimators 
+\item More than 1 iteration required before convergence
+\item A combination of weightings might show some improvements
+\item Millepede downweighting $\rightarrow$ Cauchy,Cauchy,Huber
 \end{itemize}
-%\item First time use for testbeam reconstruction
-}
+\end{columns}
+\vspace{5pt}
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}
+\frametitle{Conclusion}
+\begin{itemize}
+\item The GBL algorithm has been implemented into EUTelescope
+\item Many examples exist for a variety of sensors 
+\item Further development:
+\begin{itemize}
+\item The track model must be validated\\  $\rightarrow$ Use Allpix as part of a processor for easy simulation of possible testbeams 
+\item Further integration with other fitters. \\$\rightarrow$ LCIO format differences/Similar implementations  
+\end{itemize} 
 \end{itemize}
-\end{enumerate}
-}
-\textbf{A single track can be constructed in 4 steps...} 
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+\frametitle{Track Selection with May 2015 Strip Data}
+Example of track selection for $\chi^{2}<5$. \textcolor{green}{Pass cut.}  \textcolor{red}{Fail cut.}
+\begin{columns}[t]
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.8\linewidth]{pics/chi2.png}\\
+\tiny{\textbf{Chi2}}\\
+\includegraphics[width=0.8\linewidth]{pics/residual1.png}\\
+\tiny{\textbf{Sensor 1 Residual X}}\\
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.8\linewidth]{pics/Pos8X.png}\\ 
+\tiny{\textbf{DUT local position X}} \\
+\includegraphics[width=0.8\linewidth]{pics/slope1X.png}\\ 
+\tiny{\textbf{Sensor 1 local Slope X}} \\
+\end{columns}
+\vspace{5pt}
 \end{frame}
 %------------------------------------------------
 
@@ -398,8 +552,8 @@ Future additions
 \begin{frame}
 Backup
 \end{frame}
-\section{Additional Information}
-\subsection{Magnetic Fields}
+%\section{Additional Information}
+%\subsection{Magnetic Fields}
 \begin{frame}
 \frametitle{Magnetic Fields}
 \begin{figure}
@@ -410,7 +564,7 @@ Backup
 \end{figure}
 \end{frame}
 
-\subsection{Current Testbeam Reconstruction}
+%\subsection{Current Testbeam Reconstruction}
 \begin{frame}
 \frametitle{Current Testbeam Reconstruction (October 2015)}
 \begin{columns}[t]
@@ -439,7 +593,7 @@ However overall fit is still not perfect.
 \end{columns}
 \end{frame}
 
-\end{document}
+
 \section{Additional Information}
 \subsection{EUDET/AIDA Pixel Beam Telescope}
 \begin{frame}
